@@ -31,7 +31,7 @@ def produtos(request):
 
 @login_required
 def novo_produto(request):
-    form = ProdutoForm(request.POST or None)
+    form = ProdutoForm(request.POST if request.method == "POST" else None)
     if request.method == "POST" and form.is_valid():
         form.save()
         messages.success(request, "Produto cadastrado com sucesso.")
@@ -60,7 +60,7 @@ def lotes(request):
 
 @login_required
 def novo_lote(request):
-    form = LoteForm(request.POST or None)
+    form = LoteForm(request.POST if request.method == "POST" else None)
     if request.method == "POST" and form.is_valid():
         form.save()
         messages.success(request, "Lote cadastrado. Registre uma entrada para adicionar saldo.")
@@ -84,7 +84,7 @@ def movimentacoes(request):
 
 @login_required
 def nova_movimentacao(request):
-    form = MovimentacaoForm(request.POST or None)
+    form = MovimentacaoForm(request.POST if request.method == "POST" else None)
     if request.method == "POST" and form.is_valid():
         dados = form.cleaned_data
         try:

@@ -1,3 +1,6 @@
+import os
+import subprocess
+import sys
 import uuid
 from concurrent.futures import ThreadPoolExecutor
 from datetime import timedelta
@@ -7,7 +10,7 @@ from unittest import skipUnless
 
 from django.contrib.auth import get_user_model
 from django.db import close_old_connections, connection
-from django.test import Client, TestCase, TransactionTestCase
+from django.test import Client, SimpleTestCase, TestCase, TransactionTestCase
 from django.urls import reverse
 from django.utils import timezone
 
@@ -115,6 +118,18 @@ class PaginasTests(EstoqueBase):
         self.assertEqual(response.json()["unidade"], "kg")
         self.assertEqual(self.client.post(reverse("estoque:detalhe_lote_api", args=[lote.pk])).status_code, 405)
 
+    def test_formularios_vazios_exibem_os_erros_de_validacao(self):
+        self.client.force_login(self.user)
+        for nome in ("novo_produto", "novo_lote", "nova_movimentacao"):
+            with self.subTest(formulario=nome):
+                response = self.client.post(reverse("estoque:" + nome), {})
+                self.assertEqual(response.status_code, 200)
+                self.assertTrue(response.context["form"].is_bound)
+                self.assertTrue(response.context["form"].errors)
+        self.assertEqual(Produto.objects.count(), 1)
+        self.assertEqual(Lote.objects.count(), 1)
+        self.assertEqual(Movimentacao.objects.count(), 0)
+
     def test_reenvio_web_idempotente(self):
         self.client.force_login(self.user)
         data = {"lote": self.lote.pk, "tipo": "entrada", "quantidade": "3.00", "motivo": "",
@@ -168,6 +183,51 @@ class ValidadeTests(EstoqueBase):
         self.assertEqual(response.context["proximos"], 1)
         response = self.client.get(reverse("estoque:lotes"), {"status": "vencido"})
         self.assertEqual(list(response.context["lotes"].values_list("codigo", flat=True)), ["A01"])
+
+
+class ConfiguracaoTests(SimpleTestCase):
+    def carregar_configuracao(self, alteracoes, remover=()):
+        ambiente = os.environ.copy()
+        for chave in remover:
+            ambiente.pop(chave, None)
+        ambiente.update(alteracoes)
+        return subprocess.run(
+            [sys.executable, "-c", (
+                "import configuracao.settings as s; "
+                "print(s.DEBUG, s.SESSION_COOKIE_SECURE, s.CSRF_COOKIE_SECURE)"
+            )],
+            env=ambiente, capture_output=True, text=True,
+        )
+
+    def test_modo_local_aceita_configuracao_de_demonstracao(self):
+        resultado = self.carregar_configuracao(
+            {"DJANGO_DEBUG": "true", "DB_ENGINE": "sqlite"}, remover=("DJANGO_SECRET_KEY",)
+        )
+        self.assertEqual(resultado.returncode, 0)
+        self.assertEqual(resultado.stdout.strip(), "True False False")
+
+    def test_modo_sem_debug_rejeita_chave_ausente_ou_padrao(self):
+        for chave in (None, "", "   ", "somente-desenvolvimento-altere-esta-chave"):
+            with self.subTest(chave=chave):
+                valores = {"DJANGO_DEBUG": "false", "DB_ENGINE": "sqlite"}
+                if chave is not None:
+                    valores["DJANGO_SECRET_KEY"] = chave
+                resultado = self.carregar_configuracao(valores, remover=("DJANGO_SECRET_KEY",))
+                self.assertNotEqual(resultado.returncode, 0)
+                self.assertIn("DJANGO_SECRET_KEY", resultado.stderr)
+
+    def test_modo_sem_debug_exige_cookies_seguros(self):
+        resultado = self.carregar_configuracao({
+            "DJANGO_DEBUG": "false", "DB_ENGINE": "sqlite",
+            "DJANGO_SECRET_KEY": "exemplo-exclusivamente-para-teste-automático",
+        })
+        self.assertEqual(resultado.returncode, 0)
+        self.assertEqual(resultado.stdout.strip(), "False True True")
+
+    def test_banco_digitado_errado_nao_seleciona_sqlite(self):
+        resultado = self.carregar_configuracao({"DJANGO_DEBUG": "true", "DB_ENGINE": "postgress"})
+        self.assertNotEqual(resultado.returncode, 0)
+        self.assertIn("DB_ENGINE", resultado.stderr)
 
 
 @skipUnless(connection.vendor == "postgresql", "Concorrência com bloqueio de linha requer PostgreSQL")
