@@ -2,10 +2,17 @@
 import os
 from pathlib import Path
 
+from django.core.exceptions import ImproperlyConfigured
+
 BASE_DIR = Path(__file__).resolve().parent.parent
-# Este valor é apenas para desenvolvimento local. Use DJANGO_SECRET_KEY em outros ambientes.
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "somente-desenvolvimento-altere-esta-chave")
+# A chave de demonstração nunca pode ser usada quando DEBUG estiver desativado.
 DEBUG = os.environ.get("DJANGO_DEBUG", "true").lower() == "true"
+CHAVE_DESENVOLVIMENTO = "somente-desenvolvimento-altere-esta-chave"
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", CHAVE_DESENVOLVIMENTO)
+if not DEBUG and (not SECRET_KEY.strip() or SECRET_KEY == CHAVE_DESENVOLVIMENTO):
+    raise ImproperlyConfigured("Defina DJANGO_SECRET_KEY exclusiva antes de desativar DJANGO_DEBUG.")
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
 ALLOWED_HOSTS = [h.strip() for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",") if h.strip()]
 
 INSTALLED_APPS = [
@@ -31,7 +38,11 @@ TEMPLATES = [{
 }]
 WSGI_APPLICATION = "configuracao.wsgi.application"
 
-if os.environ.get("DB_ENGINE", "sqlite").lower() == "postgresql":
+DB_ENGINE = os.environ.get("DB_ENGINE", "sqlite").lower()
+if DB_ENGINE not in {"sqlite", "postgresql"}:
+    raise ImproperlyConfigured("DB_ENGINE deve ser 'sqlite' ou 'postgresql'.")
+
+if DB_ENGINE == "postgresql":
     DATABASES = {"default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.environ.get("DB_NAME", "estoque"),

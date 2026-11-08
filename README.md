@@ -78,4 +78,6 @@ Os testes cobrem autenticação, formulários, movimentações, repetição de l
 
 Este projeto é uma primeira versão para desenvolvimento e avaliação, não uma implantação pronta para produção. Por padrão, as configurações são de desenvolvimento local e o acesso ao CSS do Bootstrap usa uma CDN. Antes de qualquer uso público ou com dados reais, configure uma chave secreta exclusiva por meio de `DJANGO_SECRET_KEY`, desative `DJANGO_DEBUG`, configure `DJANGO_ALLOWED_HOSTS`, HTTPS, permissões, backup e demais proteções apropriadas. Não publique credenciais no repositório.
 
+Com `DJANGO_DEBUG=false`, é obrigatório definir uma `DJANGO_SECRET_KEY` diferente da chave de desenvolvimento; os cookies de sessão e CSRF passam a exigir HTTPS. Valores incorretos de `DB_ENGINE` são recusados em vez de selecionar SQLite silenciosamente.
+
 O sistema permite que usuários autenticados realizem as operações de estoque; perfis e permissões específicas ainda dependem de definição. Não registra comprovação de visita, de perdas reais ou de validação do parceiro.
