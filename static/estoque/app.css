@@ -3,3 +3,9 @@ body { background: #f3f7fa; color: #17324a; }
 .navbar-brand { color: #0b6680; }
 .login-card { max-width: 440px; border: 0; border-radius: 1rem; }
 .card { border-color: #dce7eb; }
+
+.nav-wrap { background: #fff; }
+.nav-wrap .nav-link { color: #245368; white-space: nowrap; }
+.eyebrow { color: #33758b; font-size: .75rem; font-weight: 700; letter-spacing: .08em; }
+.table th, .table td { padding: .85rem 1rem; }
+.errorlist { color: #b02a37; padding-left: 1.2rem; }

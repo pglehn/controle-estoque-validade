@@ -4,6 +4,11 @@
   <div><h1 class="h3 mb-0">Movimentações</h1><small class="text-secondary">Últimos 100 registros</small></div>
   <a class="btn btn-primary" href="{% url 'estoque:nova_movimentacao' %}">Registrar movimentação</a>
 </div>
+<form method="get" class="d-flex gap-2 mb-3">
+  <label for="tipo" class="visually-hidden">Filtrar tipo</label><select name="tipo" id="tipo" class="form-select w-auto">
+    <option value="">Todos os tipos</option>{% for valor, rotulo in tipos %}<option value="{{ valor }}" {% if tipo == valor %}selected{% endif %}>{{ rotulo }}</option>{% endfor %}
+  </select><button class="btn btn-outline-secondary">Filtrar</button>
+</form>
 <div class="card"><div class="table-responsive"><table class="table mb-0 align-middle">
   <thead><tr><th>Data</th><th>Lote</th><th>Tipo</th><th>Quantidade</th><th>Motivo</th><th>Usuário</th></tr></thead><tbody>
   {% for mov in movimentacoes %}

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h1 class="h3 mb-0">{{ titulo }}</h1><a class="btn btn-outline-secondary" href="{% url voltar %}">Voltar</a>
@@ -10,6 +11,7 @@
     {% for field in form %}
       <div class="mb-3">
         {{ field.label_tag }} {{ field }}
+        {% if mostrar_saldo_lote and field.name == "lote" %}<p id="saldo-lote" class="form-text" aria-live="polite" data-api="{% url 'estoque:detalhe_lote_api' 0 %}"></p>{% endif %}
         {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
         {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
       </div>
@@ -17,4 +19,5 @@
     <button class="btn btn-primary" type="submit">Salvar</button>
   </form>
 </div></div>
+{% if mostrar_saldo_lote %}<script src="{% static 'estoque/movimentacao.js' %}" defer></script>{% endif %}
 {% endblock %}

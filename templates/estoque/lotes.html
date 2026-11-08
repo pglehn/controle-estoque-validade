@@ -3,11 +3,25 @@
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
   <h1 class="h3 mb-0">Lotes e validade</h1><a class="btn btn-primary" href="{% url 'estoque:novo_lote' %}">Cadastrar lote</a>
 </div>
+<form method="get" class="d-flex gap-2 mb-3">
+  <label for="status" class="visually-hidden">Filtrar situação</label>
+  <select class="form-select w-auto" id="status" name="status">
+    <option value="">Todos os lotes</option>
+    <option value="vencido" {% if filtro == "vencido" %}selected{% endif %}>Vencidos</option>
+    <option value="proximo" {% if filtro == "proximo" %}selected{% endif %}>Próximos do vencimento</option>
+    <option value="regular" {% if filtro == "regular" %}selected{% endif %}>Em dia</option>
+    <option value="sem_saldo" {% if filtro == "sem_saldo" %}selected{% endif %}>Sem saldo</option>
+  </select><button class="btn btn-outline-secondary">Filtrar</button>
+</form>
 <div class="card"><div class="table-responsive"><table class="table mb-0 align-middle">
-  <thead><tr><th>Produto</th><th>Lote</th><th>Validade</th><th>Saldo</th></tr></thead><tbody>
+  <thead><tr><th>Produto</th><th>Lote</th><th>Validade</th><th>Saldo</th><th>Situação</th></tr></thead><tbody>
   {% for lote in lotes %}<tr><td>{{ lote.produto.nome }}</td><td>{{ lote.codigo }}</td>
-    <td>{{ lote.validade|date:"d/m/Y" }}</td><td>{{ lote.saldo }} {{ lote.produto.unidade }}</td></tr>
-  {% empty %}<tr><td colspan="4" class="text-secondary">Nenhum lote cadastrado.</td></tr>{% endfor %}
+    <td>{{ lote.validade|date:"d/m/Y" }}</td><td>{{ lote.saldo }} {{ lote.produto.unidade }}</td>
+    <td>{% if lote.status_validade == "vencido" %}<span class="badge text-bg-danger">Vencido</span>
+      {% elif lote.status_validade == "proximo" %}<span class="badge text-bg-warning">Próximo</span>
+      {% elif lote.status_validade == "sem_saldo" %}<span class="badge text-bg-secondary">Sem saldo</span>
+      {% else %}<span class="badge text-bg-success">Em dia</span>{% endif %}</td></tr>
+  {% empty %}<tr><td colspan="5" class="text-secondary">Nenhum lote encontrado.</td></tr>{% endfor %}
   </tbody>
 </table></div></div>
 {% endblock %}

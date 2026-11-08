@@ -1,7 +1,9 @@
+from datetime import timedelta
 from decimal import Decimal
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.utils import timezone
 
 class Produto(models.Model):
     class Unidade(models.TextChoices):
@@ -39,6 +41,17 @@ class Lote(models.Model):
 
     def __str__(self):
         return f"{self.produto.nome} — lote {self.codigo}"
+
+    @property
+    def status_validade(self):
+        if self.saldo <= 0:
+            return "sem_saldo"
+        hoje = timezone.localdate()
+        if self.validade < hoje:
+            return "vencido"
+        if self.validade <= hoje + timedelta(days=settings.DIAS_ALERTA_VALIDADE):
+            return "proximo"
+        return "regular"
 
 
 class Movimentacao(models.Model):

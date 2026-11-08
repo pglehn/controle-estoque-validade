@@ -20,6 +20,14 @@
       {% endif %}
     </nav>
   </header>
+  {% if user.is_authenticated %}
+  <div class="nav-wrap border-bottom"><nav class="container nav flex-nowrap overflow-auto" aria-label="Navegação principal">
+    <a class="nav-link" href="{% url 'estoque:inicio' %}">Início</a>
+    <a class="nav-link" href="{% url 'estoque:produtos' %}">Produtos</a>
+    <a class="nav-link" href="{% url 'estoque:lotes' %}">Lotes e validade</a>
+    <a class="nav-link" href="{% url 'estoque:movimentacoes' %}">Movimentações</a>
+  </nav></div>
+  {% endif %}
   <main class="container py-4 py-md-5">
     {% if messages %}
       {% for message in messages %}<div class="alert alert-{{ message.tags|default:'info' }}" role="alert">{{ message }}</div>{% endfor %}

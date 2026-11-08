@@ -1,5 +1,27 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Estoque em Dia</h1>
-<p>O projeto está em desenvolvimento.</p>
+<div class="mb-4">
+  <p class="eyebrow mb-1">CONTROLE DE ESTOQUE E VALIDADE</p>
+  <h1 class="h2">Estoque em Dia</h1>
+  <p class="text-secondary">Acompanhe os produtos e identifique lotes que precisam de atenção.</p>
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="card h-100"><div class="card-body"><span class="text-secondary">Produtos cadastrados</span><p class="display-6 mb-0">{{ total_produtos }}</p></div></div></div>
+  <div class="col-6 col-lg-3"><div class="card h-100"><div class="card-body"><span class="text-secondary">Lotes com saldo</span><p class="display-6 mb-0">{{ total_lotes }}</p></div></div></div>
+  <div class="col-6 col-lg-3"><div class="card h-100"><div class="card-body"><span class="text-secondary">Lotes próximos</span><p class="display-6 mb-0 text-warning-emphasis">{{ proximos }}</p></div></div></div>
+  <div class="col-6 col-lg-3"><div class="card h-100"><div class="card-body"><span class="text-secondary">Lotes vencidos</span><p class="display-6 mb-0 text-danger">{{ vencidos }}</p></div></div></div>
+</div>
+<h2 class="h4 mb-3">O que você deseja fazer?</h2>
+<div class="row g-3 mb-4">
+  <div class="col-md-4"><div class="card h-100"><div class="card-body"><h3 class="h5">Produtos e lotes</h3><p class="text-secondary">Cadastre os produtos, lotes e datas de validade.</p><a class="btn btn-outline-primary" href="{% url 'estoque:produtos' %}">Ver produtos</a> <a class="btn btn-outline-primary" href="{% url 'estoque:lotes' %}">Ver lotes</a></div></div></div>
+  <div class="col-md-4"><div class="card h-100"><div class="card-body"><h3 class="h5">Registrar movimentação</h3><p class="text-secondary">Lance uma entrada, saída ou descarte.</p><a class="btn btn-primary" href="{% url 'estoque:nova_movimentacao' %}">Nova movimentação</a></div></div></div>
+  <div class="col-md-4"><div class="card h-100"><div class="card-body"><h3 class="h5">Consultar vencimentos</h3><p class="text-secondary">Confira lotes vencidos ou próximos do vencimento.</p><a class="btn btn-outline-primary" href="{% url 'estoque:lotes' %}">Consultar lotes</a></div></div></div>
+</div>
+<div class="card"><div class="card-body">
+  <h2 class="h5">Atenção aos vencimentos</h2>
+  <p class="text-secondary small">Lotes com saldo vencidos ou que vencem nos próximos {{ dias_alerta }} dias, incluindo hoje.</p>
+  {% if alertas %}
+    <ul class="mb-0">{% for lote in alertas %}<li>{{ lote.produto.nome }} · lote {{ lote.codigo }} · {{ lote.validade|date:"d/m/Y" }} · {{ lote.saldo }} {{ lote.produto.unidade }}</li>{% endfor %}</ul>
+  {% else %}<p class="mb-0">Nenhum lote com saldo necessita de atenção neste período.</p>{% endif %}
+</div></div>
 {% endblock %}
