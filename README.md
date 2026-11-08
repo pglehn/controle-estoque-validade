@@ -10,6 +10,7 @@ Sistema de Controle de Estoque e Validade para Redução do Desperdício de Alim
 - Saldo por lote, verificação de saldo insuficiente e proteção contra o reenvio do mesmo lançamento.
 - Consulta de lotes e alertas para itens vencidos ou com vencimento nos próximos sete dias.
 - Histórico das últimas 100 movimentações, com filtro por tipo.
+- Modo de alto contraste ativável por botão, com preferência armazenada no navegador.
 
 Lotes com saldo zero aparecem na consulta, mas não geram alertas. Um produto que vence hoje é considerado próximo do vencimento. Novos lotes começam com saldo zero: registre uma entrada para adicionar quantidade.
 
@@ -81,3 +82,5 @@ Este projeto é uma primeira versão para desenvolvimento e avaliação, não um
 Com `DJANGO_DEBUG=false`, é obrigatório definir uma `DJANGO_SECRET_KEY` diferente da chave de desenvolvimento; os cookies de sessão e CSRF passam a exigir HTTPS. Valores incorretos de `DB_ENGINE` são recusados em vez de selecionar SQLite silenciosamente.
 
 O sistema permite que usuários autenticados realizem as operações de estoque; perfis e permissões específicas ainda dependem de definição. Não registra comprovação de visita, de perdas reais ou de validação do parceiro.
+
+O modo de alto contraste é uma opção de visualização e ainda precisa ser avaliado com usuários; sua presença não representa certificação de conformidade com padrões de acessibilidade.

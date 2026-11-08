@@ -9,3 +9,57 @@ body { background: #f3f7fa; color: #17324a; }
 .eyebrow { color: #33758b; font-size: .75rem; font-weight: 700; letter-spacing: .08em; }
 .table th, .table td { padding: .85rem 1rem; }
 .errorlist { color: #b02a37; padding-left: 1.2rem; }
+
+/* Alto contraste opcional; os estados dos lotes também são apresentados em texto. */
+html.alto-contraste { color-scheme: dark; }
+html.alto-contraste body,
+html.alto-contraste .site-header,
+html.alto-contraste .nav-wrap,
+html.alto-contraste .card,
+html.alto-contraste .card-body,
+html.alto-contraste .table-responsive { background: #000 !important; color: #fff !important; border-color: #fff !important; }
+html.alto-contraste a,
+html.alto-contraste .navbar-brand,
+html.alto-contraste .nav-link,
+html.alto-contraste .eyebrow { color: #ffed00 !important; }
+html.alto-contraste .text-secondary,
+html.alto-contraste .text-warning-emphasis,
+html.alto-contraste .text-danger,
+html.alto-contraste .form-text { color: #fff !important; }
+html.alto-contraste .table {
+  --bs-table-bg: #000;
+  --bs-table-color: #fff;
+  --bs-table-border-color: #fff;
+}
+html.alto-contraste .form-control,
+html.alto-contraste .form-select {
+  background-color: #000 !important;
+  color: #fff !important;
+  border-color: #fff !important;
+}
+html.alto-contraste .form-select { appearance: auto; background-image: none; }
+html.alto-contraste .btn {
+  background: #000 !important;
+  color: #ffed00 !important;
+  border: 2px solid #ffed00 !important;
+}
+html.alto-contraste #alternar-contraste[aria-pressed="true"] {
+  background: #ffed00 !important;
+  color: #000 !important;
+}
+html.alto-contraste .badge {
+  background: #000 !important;
+  color: #fff !important;
+  border: 1px solid #fff;
+}
+html.alto-contraste .alert {
+  background: #000 !important;
+  color: #fff !important;
+  border-color: #fff !important;
+}
+html.alto-contraste :is(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid #00ffff;
+  outline-offset: 3px;
+}
+
+.acessibilidade-toggle { min-height: 44px; }

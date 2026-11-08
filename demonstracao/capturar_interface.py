@@ -1,5 +1,6 @@
 """Gera evidências da aplicação real usando um banco temporário e dados fictícios."""
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -95,9 +96,24 @@ def main():
             expect(page.locator("span.badge").filter(has_text="Próximo")).to_be_visible()
             expect(page.locator("span.badge").filter(has_text="Vencido")).to_be_visible()
             expect(page.locator("span.badge").filter(has_text="Em dia")).to_be_visible()
+            page.evaluate("window.scrollTo(0, 0)")
             page.screenshot(path=str(directory / "02_lotes_e_validade.jpg"), type="jpeg", quality=82, full_page=True)
+
+            contraste = page.locator("#alternar-contraste")
+            contraste.focus()
+            page.keyboard.press("Enter")
+            expect(contraste).to_have_attribute("aria-pressed", "true")
+            expect(page.locator("html")).to_have_class(re.compile(r"\balto-contraste\b"))
+            assert page.evaluate("getComputedStyle(document.body).backgroundColor") == "rgb(0, 0, 0)"
+            page.reload(wait_until="networkidle")
+            expect(contraste).to_have_attribute("aria-pressed", "true")
+            expect(page.get_by_text("Feijão carioca", exact=True)).to_be_visible()
+            page.evaluate("window.scrollTo(0, 0)")
+            page.screenshot(path=str(directory / "03_alto_contraste.jpg"), type="jpeg", quality=82, full_page=True)
+            contraste.click()
+            expect(contraste).to_have_attribute("aria-pressed", "false")
             browser.close()
-            print("Interface real executada com dados fictícios; duas capturas geradas.")
+            print("Interface real e alto contraste verificados com dados fictícios; três capturas geradas.")
     finally:
         server.terminate()
         server.wait(timeout=15)
