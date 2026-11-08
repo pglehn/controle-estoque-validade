@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+  <h1 class="h3 mb-0">Lotes e validade</h1><a class="btn btn-primary" href="{% url 'estoque:novo_lote' %}">Cadastrar lote</a>
+</div>
+<div class="card"><div class="table-responsive"><table class="table mb-0 align-middle">
+  <thead><tr><th>Produto</th><th>Lote</th><th>Validade</th><th>Saldo</th></tr></thead><tbody>
+  {% for lote in lotes %}<tr><td>{{ lote.produto.nome }}</td><td>{{ lote.codigo }}</td>
+    <td>{{ lote.validade|date:"d/m/Y" }}</td><td>{{ lote.saldo }} {{ lote.produto.unidade }}</td></tr>
+  {% empty %}<tr><td colspan="4" class="text-secondary">Nenhum lote cadastrado.</td></tr>{% endfor %}
+  </tbody>
+</table></div></div>
+{% endblock %}
