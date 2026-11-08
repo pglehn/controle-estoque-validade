@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Entrar · Estoque em Dia{% endblock %}
+{% block content %}
+<div class="card shadow-sm mx-auto login-card"><div class="card-body p-4">
+  <h1 class="h3">Acessar o sistema</h1>
+  <p class="text-secondary">Entre com a conta cadastrada pelo administrador.</p>
+  {% if form.errors %}<div class="alert alert-danger">Usuário ou senha inválidos. Tente novamente.</div>{% endif %}
+  <form method="post">{% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}">
+    <label class="form-label" for="id_username">Usuário</label>
+    <input class="form-control mb-3" id="id_username" name="username" autocomplete="username" required autofocus>
+    <label class="form-label" for="id_password">Senha</label>
+    <input class="form-control mb-4" id="id_password" name="password" type="password" autocomplete="current-password" required>
+    <button class="btn btn-primary w-100" type="submit">Entrar</button>
+  </form>
+</div></div>
+{% endblock %}
